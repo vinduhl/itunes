@@ -14,7 +14,7 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
         {field: 'Collection', displayName: 'Collection'},
         {field: 'AlbumArt', displayName: 'Album Art', width: '110px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><img src="{{row.getProperty(col.field)}}"></div>'},
         {field: 'Type', displayName: 'Type'},
-        {field: 'CollectionPrice', displayName: 'Collection Price'},
+        {field: 'CollectionPrice', displayName: 'Collection Price'}
       ]
   };
 
@@ -29,6 +29,8 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
   //*remember, that method should be expecting an artist name. The artist name is coming from the input box on index.html, head over there and check if that input box is tied to any specific model we could use.
   //Also note that that method should be retuning a promise, so you could use .then in this function.
 
+    $scope.typeOptions = ["song", "feature-movie"];
+
     //Code here
     $scope.getSongData = function() {
       console.log( $scope.artist );
@@ -36,6 +38,15 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
         .then( function( results ) {
 
           var artistArray = [];
+
+          // Filter results
+          results = results.filter( function(val) {
+            if($scope.selectedType && $scope.selectedType.trim() !== "") {
+              return val.kind === $scope.selectedType;
+            } else {
+              return true;
+            }
+          });
 
           for(var i = 0; i < results.length; i++) {
             // package each object
@@ -53,6 +64,8 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
           $scope.songData = artistArray;
         })
     }
+
+
 
   //Check that the above method is working by entering a name into the input field on your web app, and then console.log the result
 
@@ -77,4 +90,5 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
   //Once you have that final data array, you simply need to put it on the scope (or more specifically on the scope as songData). Once you do this ($scope.songData = myFinalArray) then ng-grid will see that and populate the page.
 
     //Code here
+
 });
